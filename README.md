@@ -1,5 +1,7 @@
 # Jane Street Market Prediction — Kaggle Competition
 
+![Competition Header](assets/header.png)
+
 ## Overview
 
 The [Jane Street Market Prediction](https://www.kaggle.com/competitions/jane-street-market-prediction) competition (2020-2021) challenged participants to build a model that predicts profitable trading actions from 130 anonymized financial features. The task was binary classification (trade or don't trade), with economic significance weighted by trade importance.
@@ -30,6 +32,31 @@ Final submission blended three diverse model families with optimized weights:
 - **PyTorch ResNet-MLP** (weight: 0.41) — 5-fold with dense skip connections
 - **Keras MLP** (weight: 0.41) — Swish activation + RectifiedAdam optimizer
 - **Embedding NN** (weight: 0.18) — leveraged competition-provided feature tag metadata to create learned feature embeddings, enriching raw features with structural relationships
+
+## Results
+
+| Model | Ensemble Weight | Notes |
+|---|---|---|
+| XGBoost baseline | — | Initial baseline, feature importance |
+| LightGBM + Focal Loss | — | Custom gradient/hessian, One-vs-Rest |
+| PyTorch ResNet-MLP | 0.41 | 5-fold, dense skip connections |
+| Keras MLP | 0.41 | Swish activation + RectifiedAdam |
+| Embedding NN | 0.18 | Learned feature tag embeddings |
+| **Final 3-Model Ensemble** | — | Utility-score optimized |
+
+## Architecture
+
+```mermaid
+graph LR
+    A["130 Anonymized Features"] --> B["NaN Imputation<br>(feature-mean)"]
+    B --> C1["PyTorch ResNet-MLP<br>5-fold, skip connections"]
+    B --> C2["Keras MLP<br>Swish + RectifiedAdam"]
+    B --> C3["Embedding NN<br>feature tag metadata"]
+    C1 -->|"w=0.41"| D["Weighted Blend"]
+    C2 -->|"w=0.41"| D
+    C3 -->|"w=0.18"| D
+    D --> E["Trade / No-Trade Decision"]
+```
 
 ## Repository Structure
 
